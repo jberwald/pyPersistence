@@ -1,0 +1,5 @@
+Wasserstein distance code, written by Miro Kramer (2013). 
+
+to compile:
+
+g++ -O3 -c wassersteinDist.cpp -o wasserstein

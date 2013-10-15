@@ -1,0 +1,5 @@
+Bottleneck distance code, written by Miro Kramer (2013). 
+
+to compile:
+
+g++ -O3 -c bottleneckDist.cpp -o bottleneck
