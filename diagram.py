@@ -15,8 +15,11 @@ class PersistenceDiagram( pd.Diagram ):
 
     # Add custom diagram methods below
 
+
+
 class DiagramCollection( PersistenceDiagram ):
     """
+    Convenience wrapper for many diagrams. Can add functionality if necessary. 
     """
     def __init__( self, diagrams=None ):
         """

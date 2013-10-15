@@ -85,7 +85,7 @@ def generate_test_data():
 if __name__ == "__main__":
 
     test1 = True
-    test2 = True
+    test2 = False
 
     if test1:
     ##############################################
