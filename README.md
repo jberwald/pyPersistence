@@ -14,5 +14,6 @@ Perseus (http://www.math.rutgers.edu/~vidit/perseus/index.html)
 
 Wasserstein distance code (provided)
 Bottleneck distance code (provided)
+** See README in distance folders for compilation instructions. 
 
-See README in distance folder for compilation instructions. 
+Once compiled, the names 'wasserstein' and 'bottleneck' must be in your PATH. 
