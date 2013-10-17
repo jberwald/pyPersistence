@@ -84,8 +84,14 @@ def generate_test_data():
 
 if __name__ == "__main__":
 
-    test1 = True
+    test1 = False
     test2 = False
+    test_perseus = True
+
+    if test_perseus:
+        a = np.ones( (10,10) )
+        a[3,3] = a[7,7] = 10
+        b = [ a for i in range(3) ]
 
     if test1:
     ##############################################
