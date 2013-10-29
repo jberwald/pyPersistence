@@ -33,7 +33,7 @@ class PerseusProcessor( Data ):
         Data.__init__(  self, data )
         self.dim = data.ndim
 
-    def write_perseus( self, outname=None, dtype='scubtop', dimcap=None ):                                 
+    def write_perseus( self, outname=None, dtype='scubtop', dimcap=None, **kwargs ):                                 
         """
         Output the data in Perseus format.
 
@@ -60,7 +60,7 @@ class PerseusProcessor( Data ):
             n2p.write_cubtop( self.data, outname, scale )
         # these only differ on the command-line call
         elif dtype == 'distmat' or dtype == 'corrmat':
-            n2p.write_distance_mat( self.data, outname, dimcap=dimcap )
+            n2p.write_distance_mat( self.data, outname, dimcap=dimcap, **kwargs )
         else:
             print "Unrecognized dtype"
             raise
