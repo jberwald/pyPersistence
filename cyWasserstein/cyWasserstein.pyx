@@ -1,40 +1,40 @@
 '''
 Created on Jan 19, 2013
 
-This code computes the Wasserstein distance between two diagrams,
-as well as running the gradient descent algorithm from:
+This code computes the Wasserstein distance between two diagrams. 
 
-Frechet Means for Distributions of Persistence diagrams
-Katharine Turner, Yuriy Mileyko, Sayan Mukherjee, John Harer
-http://arxiv.org/abs/1206.2790
+Original Python version by Elizabeth Munch.
 
-
-
+Converted to Cython by JJB, Oct. 28, 2013.
 '''
+# cython ====================
+import cython
+cimport cython
 
 import numpy as np
-
-# cython
 cimport numpy as np
 
+# need a boolean type
 from cpython cimport bool
 
 # fix array dtype and also a corresponding compile-time _t type
-DTYPE = np.float
-ctypedef np.float_t DTYPE_t
+DTYPE = np.float64
+ctypedef np.float64_t DTYPE_t
+#=============================
 
-#import munkres as munk
 import _hungarian as h
 
 import random
 import pickle
-#import matplotlib.pyplot as plt
 
 
 # Cython version of dist function
-cdef float cydist( np.ndarray[DTYPE_t, ndim=1] a, 
-                   np.ndarray[DTYPE_t, ndim=1] b, 
-                   bool bottleneck ):
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.nonecheck(False)
+cdef cydist( np.ndarray[DTYPE_t, ndim=1] a, 
+             np.ndarray[DTYPE_t, ndim=1] b, 
+             bool bottleneck ):
     """
     This is a modified Wasserstein, using 'internal' norm that is
     L2, not L_\infty.
@@ -48,7 +48,7 @@ cdef float cydist( np.ndarray[DTYPE_t, ndim=1] a,
    # insideDistance=np.linalg.norm
 
     cdef DTYPE_t dist
-    cdef int i
+    cdef unsigned int i
 
     if a[0] == -2:
         if b[0] == -2:
@@ -87,39 +87,43 @@ def WassDistDiagram( D, E, p=2, bottleneck=False, returnPairing = False):
     Wass distance
     '''
     # Cython static types
-    cdef int i
-    cdef int j   
-    cdef float cyd
-    cdef float cye 
-    cdef float wass_p = p
-    cdef int k = len(D)
-    cdef int l = len(E)
-    cdef DTYPE_t answer
+    cdef unsigned int i
+    cdef unsigned int j   
+    cdef unsigned int size_d = len(D)
+    cdef unsigned int size_e = len(E)
+    cdef double cyd
+    cdef double cye 
+    cdef double wass_p = p
+    cdef double answer
     
     # lists for initial construction of edges
     D = D[:]    #Necessary to not edit the diagram at the higher level
     E = E[:]
     
     # extend D,E by diagonal vertices -2 => 'DIAG'
-    D.extend([[-2.,-2.] for i in range(l)])
-    E.extend([[-2.,-2.] for i in range(k)])
+    D.extend([[-2.,-2.] for i in range(size_e)])
+    E.extend([[-2.,-2.] for i in range(size_d)])
         
     # convert D, E to arrays for cython speed
-    cdef np.ndarray[DTYPE_t, ndim=2] cyD = np.zeros( (k+l,2), dtype=DTYPE )
-    cdef np.ndarray[DTYPE_t, ndim=2] cyE = np.zeros( (k+l,2), dtype=DTYPE )
+    cdef np.ndarray[DTYPE_t, ndim=2] cyD \
+        = np.zeros( (size_d+size_e,2), dtype=DTYPE )
+
+    cdef np.ndarray[DTYPE_t, ndim=2] cyE \
+        = np.zeros( (size_d+size_e,2), dtype=DTYPE )
 
     # fill cyD, cyE with  pairings
-    for i in range( k+l ):
+    for i in range( size_d+size_e ):
         for j in range( 2 ):
             cyD[i,j] = D[i][j]
             cyE[i,j] = E[i][j]
 
     # container for pair weights
-    cdef np.ndarray[DTYPE_t, ndim=2] M = np.zeros( [k+l,k+l], dtype=DTYPE )
+    cdef np.ndarray[DTYPE_t, ndim=2] M \
+        = np.zeros( [size_d+size_e,size_d+size_e], dtype=DTYPE )
     
     # distance computations for the extended diagrams in D,E
-    for i in range( k+l ):
-        for j in range( k+l ):
+    for i in range( size_d+size_e ):
+        for j in range( size_d+size_e ):
             if bottleneck:
                 M[i,j] = cydist( cyD[i], cyE[j], bottleneck )
             else:

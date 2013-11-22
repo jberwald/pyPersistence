@@ -29,8 +29,8 @@ class Data( object ):
 
 class PerseusProcessor( Data ):
     
-    def __init__( self, data ):
-        Data.__init__(  self, data )
+    def __init__( self, data, dtype='corrmat' ):
+        Data.__init__(  self, data, dtype=dtype )
         self.dim = data.ndim
 
     def write_perseus( self, outname=None, dtype='scubtop', dimcap=None, **kwargs ):                                 
@@ -50,8 +50,8 @@ class PerseusProcessor( Data ):
         ** If, given a Morse function (matrix of intensity values),
            computations with Perseus take a *long* time, then consider
            changing dtype='scubtop' to dtype='cubtop'. The sparse
-           matrix computations performed in the background are very
-           slow if the matrix is not actually sparse.
+           matrix computations performed are very slow if the matrix
+           is not actually sparse.
         """
         self.persfile = outname
         if dtype == 'scubtop':
